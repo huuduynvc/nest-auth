@@ -1,0 +1,59 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type CommentAddedDto {
+  id: Float!
+  comment: String!
+}
+
+type Post {
+  id: Int!
+  title: String!
+  votes: Int
+}
+
+type Author {
+  id: Int!
+  firstName: String
+  lastName: String
+  posts: [Post!]!
+}
+
+type Order {
+  id: ID!
+  address: String!
+  item: String!
+  price: String!
+  is_payment: String
+}
+
+type Query {
+  author: Author!
+  hello: String!
+  findOrdersByAddress(address: String!): [Order!]!
+}
+
+type Mutation {
+  addComment(postId: Int!, comment: String!): CommentAddedDto!
+  createOrder(createOrderInput: CreateOrderInput!): Order!
+  updateOrder(updateOrderInput: UpdateOrderInput!): Order!
+}
+
+input CreateOrderInput {
+  address: String!
+  price: Float!
+  item: String!
+}
+
+input UpdateOrderInput {
+  id: ID!
+  address: String!
+  price: Float!
+  item: String!
+  is_payment: String = "pending"
+}
+
+type Subscription {
+  commentAdded: CommentAddedDto!
+}
