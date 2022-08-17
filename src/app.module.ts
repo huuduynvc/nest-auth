@@ -12,6 +12,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { OrderModule } from './orders/orders.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronService } from './cron/cron.service';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
+import { APP_GUARD } from '@nestjs/core';
+import { GqlThrottlerGuard } from './graph-throttler.guard';
 
 @Module({
   imports: [
@@ -27,14 +31,28 @@ import { CronService } from './cron/cron.service';
           path: '/graphql',
         },
       },
+      context: ({ req, res }) => ({ req, res }),
     }),
     MongooseModule.forRoot(
       'mongodb+srv://admin:admin@nest-demo.cagfoce.mongodb.net/?retryWrites=true&w=majority',
     ),
     OrderModule,
     ScheduleModule.forRoot(),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 5,
+      storage: new ThrottlerStorageRedisService(),
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService, PubSubModule, CronService],
+  providers: [
+    AppService,
+    PubSubModule,
+    CronService,
+    {
+      provide: APP_GUARD,
+      useClass: GqlThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

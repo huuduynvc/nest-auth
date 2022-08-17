@@ -1,8 +1,8 @@
-import { Inject } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
+import { GqlThrottlerGuard } from 'src/graph-throttler.guard';
 import { CommentAddedDto } from './dto/comment-added.dto';
-import { Post } from './models/post.model';
 import { PostsService } from './posts.service';
 
 @Resolver('Post')
